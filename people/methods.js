@@ -3,7 +3,7 @@ import { check } from 'meteor/check';
 
 import { People } from './people';
 
-import { isWithinFiveSeconds } from './utils';
+import { alreadyPassedFiveSeconds } from './utils';
 
 const checkInPerson = async ({ personId }) => {
   check(personId, String);
@@ -25,8 +25,8 @@ const checkOutPerson = async ({ personId }) => {
 
   const checkInDate = person.checkIn;
 
-  if (!isWithinFiveSeconds(new Date(checkInDate))) {
-    throw new Error('Too late.');
+  if (!alreadyPassedFiveSeconds(new Date(checkInDate))) {
+    throw new Error('You just can do it after 5 seconds.');
   }
 
   await People.updateAsync(

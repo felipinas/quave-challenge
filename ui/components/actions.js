@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react';
 import { Meteor } from 'meteor/meteor';
 import { useAlert } from 'meteor/quave:alert-react-tailwind';
 
+import { alreadyPassedFiveSeconds } from '../../people/utils';
+
 export const Actions = ({ person }) => {
   const { openAlert } = useAlert();
 
@@ -14,14 +16,12 @@ export const Actions = ({ person }) => {
     try {
       await Meteor.callAsync('People.checkIn', { personId });
 
-      setShouldShowCheckoutButton(true);
-
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
 
       timeoutRef.current = setTimeout(() => {
-        setShouldShowCheckoutButton(false);
+        setShouldShowCheckoutButton(true);
 
         timeoutRef.current = null;
       }, 5000);
@@ -53,18 +53,19 @@ export const Actions = ({ person }) => {
       {!person.checkIn && (
         <button
           onClick={() => handleCheckInPerson(person._id)}
-          className="rounded-lg bg-black p-4 transition-opacity hover:opacity-80"
+          className="rounded-lg bg-lime-950 p-4 transition-opacity hover:opacity-80"
         >
-          Check in
+          Check in {person.firstName} {person.lastName}
         </button>
       )}
 
-      {shouldShowCheckoutButton && (
+      {((person.checkIn && alreadyPassedFiveSeconds(person.checkIn)) ||
+        shouldShowCheckoutButton) && (
         <button
           onClick={() => handleCheckOutPerson(person._id)}
-          className="rounded-lg bg-black p-4 transition-opacity hover:opacity-80"
+          className="rounded-lg bg-red-950 p-4 transition-opacity hover:opacity-80"
         >
-          Check out
+          Check out {person.firstName} {person.lastName}
         </button>
       )}
     </>
