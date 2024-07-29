@@ -9,18 +9,16 @@ export const Metrics = () => {
 
   const communityId = searchParams.get('community');
 
-  const isLoading = useSubscribe('people');
+  const isLoading = useSubscribe('getPeopleByCommunity', { communityId });
 
   const metrics = useTracker(() => {
     const peopleAtEventCursor = People.find({
-      communityId,
       checkIn: { $exists: true },
     });
 
     const peopleAtEventAmount = peopleAtEventCursor.count();
 
     const peopleNotCheckedIn = People.find({
-      communityId,
       checkIn: { $exists: false },
     }).count();
 

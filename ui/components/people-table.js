@@ -14,10 +14,10 @@ export const PeopleTable = () => {
 
   const communityId = searchParams.get('community');
 
-  const isLoading = useSubscribe('people');
+  const isLoading = useSubscribe('getPeopleByCommunity', { communityId });
 
   const { people } = useTracker(() => ({
-    people: People.find({ communityId }).fetch(),
+    people: People.find().fetch(),
   }));
 
   if (isLoading()) {
