@@ -12,18 +12,19 @@ export const Metrics = () => {
   const isLoading = useSubscribe('getPeopleByCommunity', { communityId });
 
   const metrics = useTracker(() => {
-    const peopleAtEventCursor = People.find({
+    const peopleAtEventAmount = People.find({
       checkIn: { $exists: true },
-    });
-
-    const peopleAtEventAmount = peopleAtEventCursor.count();
+    }).count();
 
     const peopleNotCheckedIn = People.find({
       checkIn: { $exists: false },
     }).count();
 
     const peopleByCompany = Object.groupBy(
-      peopleAtEventCursor.fetch(),
+      People.find({
+        companyName: { $exists: true },
+        checkIn: { $exists: true },
+      }).fetch(),
       ({ companyName }) => companyName
     );
 
